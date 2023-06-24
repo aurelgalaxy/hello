@@ -50,6 +50,8 @@ class OpcodeLine
     std::string arguments;
 public:
     OpcodeLine(const std::string& line);
+    std::string getOpcodes() const;
+    std::string getAssembly() const;
 };
 
 OpcodeLine::OpcodeLine(const std::string& line)
@@ -78,6 +80,16 @@ OpcodeLine::OpcodeLine(const std::string& line)
     }
 }
 
+std::string OpcodeLine::getOpcodes() const
+{
+    return opcodes;
+}
+
+std::string OpcodeLine::getAssembly() const
+{
+    return instruction+((arguments.empty())?(""):(" "+arguments));
+}
+
 int main()
 {
     std::ifstream in("opcodes.txt");
@@ -86,5 +98,10 @@ int main()
     while(std::getline(in,line))
     {
         OpcodeLine opcodeLine(line);
+        std::string opcodes=opcodeLine.getOpcodes();
+        if(!opcodes.empty())
+        {
+            std::cout<<"\""<<opcodes<<"\"=\""<<opcodeLine.getAssembly()<<"\"\n";
+        }
     }
 }
