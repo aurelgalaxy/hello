@@ -3,13 +3,12 @@
 #include <cassert>
 #include <cstdint>
 #include <fstream>
-#include <string>
 
 IMAGE_DOS_HEADER::IMAGE_DOS_HEADER(std::ifstream& in)
 {
     in.read(e_magic,2);
-    const std::string magic="MZ";
-    assert(e_magic==magic);
+    assert(!in.fail());
+    assert((e_magic[0]=='M')&&(e_magic[1]=='Z'));
     e_cblp=endian16(read16(in));
     e_cp=endian16(read16(in));
     e_crlc=endian16(read16(in));
