@@ -42,6 +42,42 @@ void old_main()
     }
 }
 
+class OpcodeLine
+{
+    std::string address;
+    std::string opcodes;
+    std::string instruction;
+    std::string arguments;
+public:
+    OpcodeLine(const std::string& line);
+};
+
+OpcodeLine::OpcodeLine(const std::string& line)
+{
+    const std::size_t opcodeSize=3;
+    const std::size_t opcodeCount=7;
+    const std::size_t opcodeChars=opcodeSize*opcodeCount;
+    if((line.size()>=18+opcodeChars)&&(line.substr(0,2)=="  "))
+    {
+        address=line.substr(2,6);
+        assert(line.substr(8,2)==":\t");
+        opcodes=line.substr(10,opcodeChars);
+        std::size_t spacesPos=opcodes.find("  ");
+        if(spacesPos!=std::string::npos)
+        {
+            opcodes=opcodes.substr(0,spacesPos);
+        }
+        assert(line[10+opcodeChars]=='\t');
+        instruction=line.substr(11+opcodeChars,7);
+        spacesPos=instruction.find(' ');
+        if(spacesPos!=std::string::npos)
+        {
+            instruction=instruction.substr(0,spacesPos);
+        }
+        arguments=line.substr(18+opcodeChars);
+    }
+}
+
 int main()
 {
     std::ifstream in("opcodes.txt");
@@ -49,37 +85,6 @@ int main()
     std::string line;
     while(std::getline(in,line))
     {
-        if((line.size()>=2)&&(line.substr(0,2)=="  "))
-        {
-            assert(line.size()>=8);
-            std::string address=line.substr(2,6);
-            std::cout<<"address: 0x"<<address<<'\n';
-            assert(line.size()>=10);
-            assert(line.substr(8,2)==":\t");
-            const std::size_t opcodeSize=3;
-            const std::size_t opcodeCount=7;
-            const std::size_t opcodeChars=opcodeSize*opcodeCount;
-            assert(line.size()>=10+opcodeChars);
-            std::string opcodes=line.substr(10,opcodeChars);
-            std::size_t spacesPos=opcodes.find("  ");
-            if(spacesPos!=std::string::npos)
-            {
-                opcodes=opcodes.substr(0,spacesPos);
-            }
-            std::cout<<"opcodes: \""<<opcodes<<"\"\n";
-            assert(line.size()>=11+opcodeChars);
-            assert(line[10+opcodeChars]=='\t');
-            assert(line.size()>=18+opcodeChars);
-            std::string instruction=line.substr(11+opcodeChars,7);
-            spacesPos=instruction.find(' ');
-            if(spacesPos!=std::string::npos)
-            {
-                instruction=instruction.substr(0,spacesPos);
-            }
-            std::cout<<"instruction: \""<<instruction<<"\"\n";
-            std::string arguments=line.substr(18+opcodeChars);
-            std::cout<<"arguments: \""<<arguments<<"\"\n";
-            return 0;
-        }
+        OpcodeLine opcodeLine(line);
     }
 }
