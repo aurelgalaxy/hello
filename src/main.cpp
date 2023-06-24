@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <sstream>
 #include <string>
 
@@ -95,13 +96,18 @@ int main()
     std::ifstream in("opcodes.txt");
     assert(!in.fail());
     std::string line;
+    std::map<std::string,std::string> decoder;
     while(std::getline(in,line))
     {
         OpcodeLine opcodeLine(line);
         std::string opcodes=opcodeLine.getOpcodes();
-        if(!opcodes.empty())
+        if((!opcodes.empty())&&(decoder.find(opcodes)==decoder.end()))
         {
-            std::cout<<"\""<<opcodes<<"\"=\""<<opcodeLine.getAssembly()<<"\"\n";
+            decoder[opcodes]=opcodeLine.getAssembly();
         }
+    }
+    for(auto entry : decoder)
+    {
+        std::cout<<"\""<<entry.first<<"\"=\""<<entry.second<<"\"\n";
     }
 }
