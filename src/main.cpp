@@ -28,4 +28,10 @@ int main()
     assert(!in.fail());
     std::uint32_t entry=imageOptionalHeader.getAddressOfEntryPoint();
     std::cout<<"entry: 0x"<<print32(entry)<<'\n';
+    in.seekg(static_cast<std::ifstream::off_type>(entry),std::ios_base::beg);
+    assert(!in.fail());
+    for(std::size_t i=0;i<16;++i)
+    {
+        std::cout<<' '<<print8(read8(in));
+    }
 }
